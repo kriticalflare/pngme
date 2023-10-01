@@ -1,6 +1,8 @@
 #[allow(unused)]
 use std::convert::TryFrom;
-use std::{error::Error, fmt::Display, str::FromStr};
+use std::{fmt::Display, str::FromStr};
+
+use crate::{Error, Result};
 
 #[derive(PartialEq, Eq, Debug)]
 struct ChunkType {
@@ -8,9 +10,9 @@ struct ChunkType {
 }
 
 impl FromStr for ChunkType {
-    type Err = Box<dyn Error>;
+    type Err = Error;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         let bytes = s.as_bytes();
         if bytes.len() != 4 {
             return Err("input str length is not 4".into());
@@ -27,9 +29,9 @@ impl FromStr for ChunkType {
 }
 
 impl TryFrom<[u8; 4]> for ChunkType {
-    type Error = Box<dyn Error>;
+    type Error = Error;
 
-    fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; 4]) -> Result<Self> {
         if value.iter().any(|byte| !byte.is_ascii_alphabetic()) {
             Err("value is not valid ascii alphabet".into())
         } else {
