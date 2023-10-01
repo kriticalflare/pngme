@@ -40,7 +40,13 @@ impl TryFrom<[u8; 4]> for ChunkType {
 
 impl Display for ChunkType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", String::from_utf8_lossy(&self.chunk_type))
+        write!(
+            f,
+            "{}",
+            String::from_utf8(self.chunk_type.to_vec())
+                .expect("chunk_type should be valid utf-8")
+                .to_string()
+        )
     }
 }
 
