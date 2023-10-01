@@ -5,9 +5,7 @@ use std::{fmt::Display, str::FromStr};
 use crate::{Error, Result};
 
 #[derive(PartialEq, Eq, Debug)]
-struct ChunkType {
-    chunk_type: [u8; 4],
-}
+pub struct ChunkType([u8; 4]);
 
 impl FromStr for ChunkType {
     type Err = Error;
@@ -24,7 +22,7 @@ impl FromStr for ChunkType {
             return Err("input str has non alphabetic ascii character".into());
         }
 
-        Ok(ChunkType { chunk_type: arr })
+        Ok(ChunkType(arr))
     }
 }
 
@@ -35,7 +33,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
         if value.iter().any(|byte| !byte.is_ascii_alphabetic()) {
             Err("value is not valid ascii alphabet".into())
         } else {
-            Ok(ChunkType { chunk_type: value })
+            Ok(ChunkType(value))
         }
     }
 }
@@ -45,7 +43,7 @@ impl Display for ChunkType {
         write!(
             f,
             "{}",
-            String::from_utf8(self.chunk_type.to_vec())
+            String::from_utf8(self.0.to_vec())
                 .expect("chunk_type should be valid utf-8")
                 .to_string()
         )
@@ -53,8 +51,12 @@ impl Display for ChunkType {
 }
 
 impl ChunkType {
+    pub fn from(bytes: [u8; 4]) -> Self {
+        Self(bytes)
+    }
+
     pub fn bytes(&self) -> [u8; 4] {
-        self.chunk_type.to_owned()
+        self.0.to_owned()
     }
 
     fn is_valid(&self) -> bool {
@@ -62,19 +64,19 @@ impl ChunkType {
     }
 
     fn is_critical(&self) -> bool {
-        (self.chunk_type[0] >> 5 & 1) == 0
+        (self.0[0] >> 5 & 1) == 0
     }
 
     fn is_public(&self) -> bool {
-        (self.chunk_type[1] >> 5 & 1) == 0
+        (self.0[1] >> 5 & 1) == 0
     }
 
     fn is_reserved_bit_valid(&self) -> bool {
-        (self.chunk_type[2] >> 5 & 1) == 0
+        (self.0[2] >> 5 & 1) == 0
     }
 
     fn is_safe_to_copy(&self) -> bool {
-        (self.chunk_type[3] >> 5 & 1) == 1
+        (self.0[3] >> 5 & 1) == 1
     }
 }
 
