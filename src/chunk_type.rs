@@ -4,7 +4,7 @@ use std::{fmt::Display, str::FromStr};
 
 use crate::{Error, Result};
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Clone, Eq, Debug)]
 pub struct ChunkType([u8; 4]);
 
 impl FromStr for ChunkType {

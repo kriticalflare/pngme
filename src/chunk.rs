@@ -5,7 +5,8 @@ use crc::{Crc, CRC_32_ISO_HDLC};
 
 pub const CRC32: Crc<u32> = Crc::<u32>::new(&CRC_32_ISO_HDLC);
 
-struct Chunk {
+#[derive(Debug, Clone)]
+pub struct Chunk {
     length: u32,
     chunk_type: ChunkType,
     data: Vec<u8>,
@@ -62,7 +63,7 @@ impl TryFrom<&[u8]> for Chunk {
 }
 
 impl Chunk {
-    fn new(chunk_type: ChunkType, chunk_data: Vec<u8>) -> Self {
+    pub fn new(chunk_type: ChunkType, chunk_data: Vec<u8>) -> Self {
         let mut crc_bytes = Vec::from(chunk_type.bytes());
         crc_bytes.extend(&chunk_data);
 
@@ -74,23 +75,33 @@ impl Chunk {
         }
     }
 
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.length
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
-    fn crc(&self) -> u32 {
+    pub fn crc(&self) -> u32 {
         self.crc
     }
 
-    fn data_as_string(&self) -> Option<String> {
+    pub fn data_as_string(&self) -> Option<String> {
         match String::from_utf8(self.data.clone()) {
             Ok(data_string) => Some(data_string),
             Err(_) => None,
         }
+    }
+
+    pub fn as_bytes(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+        bytes.extend(u32::to_be_bytes(self.length()));
+        bytes.extend(self.chunk_type().bytes());
+        bytes.extend(&self.data);
+        bytes.extend(u32::to_be_bytes(self.crc()));
+
+        bytes
     }
 }
 
