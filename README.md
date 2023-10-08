@@ -2,7 +2,7 @@
 
 PNGme is my Rust implementation of the PNGme Project, which you can find more about at [this link](https://picklenerd.github.io/pngme_book/). It's a command line program that lets you hide secret messages in PNG files.
 
-You can
+You can find the latest release [here](https://github.com/kriticalflare/pngme/releases)
 
 ## Encode Message
 
