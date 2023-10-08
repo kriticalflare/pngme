@@ -1,15 +1,9 @@
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, BufWriter, Write},
-    path::{Path, PathBuf},
 };
 
-use crate::{
-    chunk::{self, Chunk},
-    chunk_type::ChunkType,
-    png::{self, Png},
-    Result,
-};
+use crate::{chunk::Chunk, chunk_type::ChunkType, png::Png, Result};
 use clap::{Parser, Subcommand};
 
 use Command::*;
@@ -22,7 +16,14 @@ fn open(filename: &str) -> Result<Box<dyn BufRead>> {
 }
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(
+    author,
+    version,
+    about = "A command line tool to hide messages in png files"
+)]
+#[command(
+    help_template = "{author} {about-section}Version: {version} \n {usage-heading} {usage} \n {all-args} {tab}"
+)]
 pub struct CliArgs {
     #[clap(subcommand)]
     command: Command,
@@ -31,37 +32,37 @@ pub struct CliArgs {
 #[derive(Subcommand, Debug)]
 pub enum Command {
     Encode {
-        #[arg()]
+        #[arg(help = "Path to input png file")]
         file_path: String,
 
-        #[arg()]
+        #[arg(help = "Type of Chunk to be encoded")]
         chunk_type: String,
 
-        #[arg()]
+        #[arg(help = "Message to be encoded")]
         message: String,
 
-        #[arg()]
+        #[arg(help = "Path where the encoded png will be written to")]
         output_file: Option<String>,
     },
 
     Decode {
-        #[arg()]
+        #[arg(help = "Path to input png file")]
         file_path: String,
 
-        #[arg()]
+        #[arg(help = "Type of Chunk to be decoded")]
         chunk_type: String,
     },
 
     Remove {
-        #[arg()]
+        #[arg(help = "Path to input png file")]
         file_path: String,
 
-        #[arg()]
+        #[arg(help = "Type of Chunk to be removed")]
         chunk_type: String,
     },
 
     Print {
-        #[arg()]
+        #[arg(help = "Path to input png file")]
         file_path: String,
     },
 }
