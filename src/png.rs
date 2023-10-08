@@ -5,20 +5,20 @@ use crate::chunk::Chunk;
 use crate::chunk_type::ChunkType;
 use crate::{Error, Result};
 
-struct Png {
+pub struct Png {
     chunks: Vec<Chunk>,
 }
 
 impl Png {
     const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-    fn from_chunks(chunks: Vec<Chunk>) -> Png {
+    pub fn from_chunks(chunks: Vec<Chunk>) -> Png {
         Png { chunks }
     }
-    fn append_chunk(&mut self, chunk: Chunk) {
+    pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk);
     }
-    fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
+    pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         let bytes = chunk_type.as_bytes();
 
         let index = self
@@ -34,19 +34,19 @@ impl Png {
             None => Err("No element matches the condition")?,
         }
     }
-    fn header(&self) -> &[u8; 8] {
+    pub fn header(&self) -> &[u8; 8] {
         &Self::STANDARD_HEADER
     }
-    fn chunks(&self) -> &[Chunk] {
+    pub fn chunks(&self) -> &[Chunk] {
         &self.chunks
     }
-    fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         let bytes = chunk_type.as_bytes();
         self.chunks
             .iter()
             .find(|chunk| chunk.chunk_type().bytes() == bytes)
     }
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         let chunk_bytes: Vec<u8> = self
             .chunks
             .iter()
